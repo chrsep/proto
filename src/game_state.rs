@@ -1,4 +1,7 @@
-use crate::entity::{Player, Wall};
+use crate::entity::{
+    going_to_collide_bottom, going_to_collide_left, going_to_collide_right, going_to_collide_top,
+    Player, Wall,
+};
 use tetra::graphics::Color;
 use tetra::input::{is_key_down, Key};
 use tetra::{graphics, Context, State};
@@ -20,16 +23,16 @@ impl GameState {
     }
 
     pub fn handle_player_movement(&mut self, ctx: &mut Context) {
-        if is_key_down(ctx, Key::W) {
+        if is_key_down(ctx, Key::W) && !going_to_collide_top(&self.player, &self.wall) {
             self.player.move_up()
         }
-        if is_key_down(ctx, Key::S) {
+        if is_key_down(ctx, Key::S) && !going_to_collide_bottom(&self.player, &self.wall) {
             self.player.move_down()
         }
-        if is_key_down(ctx, Key::A) {
+        if is_key_down(ctx, Key::A) && !going_to_collide_left(&self.player, &self.wall) {
             self.player.move_left()
         }
-        if is_key_down(ctx, Key::D) {
+        if is_key_down(ctx, Key::D) && !going_to_collide_right(&self.player, &self.wall) {
             self.player.move_right()
         }
     }

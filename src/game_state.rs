@@ -1,11 +1,11 @@
-use crate::entity::Player;
+use crate::entity::{Player, Wall};
 use tetra::graphics::Color;
 use tetra::input::{is_key_down, Key};
-use tetra::math::Vec2;
 use tetra::{graphics, Context, State};
 
 pub struct GameState {
     player: Player,
+    wall: Wall,
 }
 
 impl GameState {
@@ -14,10 +14,8 @@ impl GameState {
 
     pub fn new(ctx: &mut Context) -> tetra::Result<GameState> {
         Ok(GameState {
-            player: Player::new(
-                ctx,
-                Vec2::new(GameState::MAP_WIDTH / 2.0, GameState::MAP_HEIGHT / 2.0),
-            ),
+            player: Player::new(ctx, GameState::MAP_WIDTH / 2.0, GameState::MAP_HEIGHT / 2.0),
+            wall: Wall::new(ctx, 300.0, 300.0, 2, 4),
         })
     }
 }
@@ -42,6 +40,7 @@ impl State for GameState {
 
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         clear_window(ctx);
+        self.wall.draw(ctx);
         self.player.draw(ctx);
         Ok(())
     }

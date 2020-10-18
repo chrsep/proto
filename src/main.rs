@@ -1,6 +1,7 @@
 use crate::game_state::GameState;
 use tetra::ContextBuilder;
 
+mod collision;
 mod entity;
 mod game_state;
 

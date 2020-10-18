@@ -1,7 +1,11 @@
+use crate::collision::Collidable;
 use tetra::graphics::{Rectangle, Texture};
-use tetra::math::Vec2;
+use tetra::math::{Aabr, Vec2};
 use tetra::{graphics, Context};
 
+// ===============================================================
+// Player
+// ===============================================================
 pub struct Player {
     texture: Texture,
     position: Vec2<f32>,
@@ -9,18 +13,19 @@ pub struct Player {
 }
 
 impl Player {
-    const MOVEMENT_SPEED: f32 = 10.0;
+    const MOVEMENT_SPEED: f32 = 5.0;
 
     pub fn new(ctx: &mut Context, x: f32, y: f32) -> Player {
+        let texture = Texture::new(ctx, "./resources/tennis-ball.png").unwrap();
         Player {
-            texture: Texture::new(ctx, "./resources/tennis-ball.png").unwrap(),
             position: Vec2::new(x, y),
             collision_box: Rectangle {
-                height: 16.0,
-                width: 16.0,
+                height: texture.height() as f32,
+                width: texture.width() as f32,
                 y,
                 x,
             },
+            texture,
         }
     }
 
@@ -54,10 +59,27 @@ impl Collidable for &Player {
         return self.collision_box;
     }
     fn check_collision(self, collision_box: Rectangle) -> bool {
-        collision_box.intersects(&self.collision_box)
+        let self_aabb = Aabr {
+            max: Vec2::new(
+                self.collision_box.x + self.collision_box.width,
+                self.collision_box.y + self.collision_box.height,
+            ),
+            min: Vec2::new(self.collision_box.x, self.collision_box.y),
+        };
+        let other_aabb = Aabr {
+            max: Vec2::new(
+                collision_box.x + collision_box.width,
+                collision_box.y + collision_box.height,
+            ),
+            min: Vec2::new(collision_box.x, collision_box.y),
+        };
+        self_aabb.collides_with_aabr(other_aabb)
     }
 }
 
+// ===============================================================
+// Wall
+// ===============================================================
 pub struct Wall {
     texture: Texture,
     position: Vec2<f32>,
@@ -68,17 +90,18 @@ pub struct Wall {
 
 impl Wall {
     pub fn new(ctx: &mut Context, x: f32, y: f32, width: i32, height: i32) -> Wall {
+        let texture = Texture::new(ctx, "./resources/stone.png").unwrap();
         Wall {
-            texture: Texture::new(ctx, "./resources/stone.png").unwrap(),
             position: Vec2::new(x, y),
             collision_box: Rectangle {
-                height: (height * 16) as f32,
-                width: (width * 16) as f32,
-                y,
-                x,
+                height: (height * texture.height() + 4) as f32,
+                width: (width * texture.width() + 4) as f32,
+                y: y - 2.0,
+                x: x - 2.0,
             },
             height,
             width,
+            texture,
         }
     }
 
@@ -104,51 +127,20 @@ impl Collidable for &Wall {
         return self.collision_box;
     }
     fn check_collision(self, collision_box: Rectangle) -> bool {
-        collision_box.intersects(&self.collision_box)
+        let self_aabb = Aabr {
+            max: Vec2::new(
+                self.collision_box.x + self.collision_box.width,
+                self.collision_box.y + self.collision_box.height,
+            ),
+            min: Vec2::new(self.collision_box.x, self.collision_box.y),
+        };
+        let other_aabb = Aabr {
+            max: Vec2::new(
+                collision_box.x + collision_box.width,
+                collision_box.y + collision_box.height,
+            ),
+            min: Vec2::new(collision_box.x, collision_box.y),
+        };
+        self_aabb.collides_with_aabr(other_aabb)
     }
-}
-
-pub trait Collidable {
-    fn get_collision_box(self) -> Rectangle;
-    fn check_collision(self, collision_box: Rectangle) -> bool;
-}
-
-pub fn going_to_collide_top<F, S>(first: F, second: S) -> bool
-where
-    F: Collidable,
-    S: Collidable,
-{
-    let mut second_collision_box = second.get_collision_box();
-    second_collision_box.y += 5.0;
-    first.check_collision(second_collision_box)
-}
-
-pub fn going_to_collide_bottom<F, S>(first: F, second: S) -> bool
-where
-    F: Collidable,
-    S: Collidable,
-{
-    let mut second_collision_box = second.get_collision_box();
-    second_collision_box.y -= 5.0;
-    first.check_collision(second_collision_box)
-}
-
-pub fn going_to_collide_left<F, S>(first: F, second: S) -> bool
-where
-    F: Collidable,
-    S: Collidable,
-{
-    let mut second_collision_box = second.get_collision_box();
-    second_collision_box.x += 5.0;
-    first.check_collision(second_collision_box)
-}
-
-pub fn going_to_collide_right<F, S>(first: F, second: S) -> bool
-where
-    F: Collidable,
-    S: Collidable,
-{
-    let mut second_collision_box = second.get_collision_box();
-    second_collision_box.x -= 5.0;
-    first.check_collision(second_collision_box)
 }

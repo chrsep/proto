@@ -18,10 +18,8 @@ impl GameState {
             wall: Wall::new(ctx, 300.0, 300.0, 2, 4),
         })
     }
-}
 
-impl State for GameState {
-    fn update(&mut self, ctx: &mut Context) -> tetra::Result {
+    pub fn handle_player_movement(&mut self, ctx: &mut Context) {
         if is_key_down(ctx, Key::W) {
             self.player.move_up()
         }
@@ -34,7 +32,12 @@ impl State for GameState {
         if is_key_down(ctx, Key::D) {
             self.player.move_right()
         }
+    }
+}
 
+impl State for GameState {
+    fn update(&mut self, ctx: &mut Context) -> tetra::Result {
+        self.handle_player_movement(ctx);
         Ok(())
     }
 

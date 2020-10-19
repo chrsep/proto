@@ -1,5 +1,5 @@
 use crate::collision::{
-    going_to_collide_bottom, going_to_collide_left, going_to_collide_right, going_to_collide_top,
+    check_bottom_collision, check_left_collision, check_right_collision, check_top_collision,
 };
 use crate::entity::{Player, Wall};
 use tetra::graphics::Color;
@@ -30,51 +30,57 @@ impl GameState {
     }
 
     pub fn handle_player_movement(&mut self, ctx: &mut Context) {
-        if is_key_down(ctx, Key::W) && !self.player_going_to_collide_with_walls_top() {
+        if is_key_down(ctx, Key::W) && !self.player_top_going_to_collide() {
             self.player.move_up()
         }
-        if is_key_down(ctx, Key::S) && !self.player_going_to_collide_with_walls_bottom() {
+        if is_key_down(ctx, Key::S) && !self.player_bottom_going_to_collide() {
             self.player.move_down()
         }
-        if is_key_down(ctx, Key::A) && !self.player_going_to_collide_with_walls_left() {
+        if is_key_down(ctx, Key::A) && !self.player_left_going_to_collide() {
             self.player.move_left()
         }
-        if is_key_down(ctx, Key::D) && !self.player_going_to_collide_with_walls_right() {
+        if is_key_down(ctx, Key::D) && !self.player_right_going_to_collide() {
             self.player.move_right()
         }
     }
 
-    pub fn player_going_to_collide_with_walls_top(&self) -> bool {
+    fn player_top_going_to_collide(&self) -> bool {
         for wall in &self.walls {
-            if going_to_collide_top(wall, &self.player) {
+            if check_top_collision(wall, &self.player) {
                 return true;
             }
         }
         return false;
     }
-    pub fn player_going_to_collide_with_walls_bottom(&self) -> bool {
+    fn player_bottom_going_to_collide(&self) -> bool {
         for wall in &self.walls {
-            if going_to_collide_bottom(wall, &self.player) {
+            if check_bottom_collision(wall, &self.player) {
                 return true;
             }
         }
         return false;
     }
-    pub fn player_going_to_collide_with_walls_left(&self) -> bool {
+    fn player_left_going_to_collide(&self) -> bool {
         for wall in &self.walls {
-            if going_to_collide_left(wall, &self.player) {
+            if check_left_collision(wall, &self.player) {
                 return true;
             }
         }
         return false;
     }
-    pub fn player_going_to_collide_with_walls_right(&self) -> bool {
+    fn player_right_going_to_collide(&self) -> bool {
         for wall in &self.walls {
-            if going_to_collide_right(wall, &self.player) {
+            if check_right_collision(wall, &self.player) {
                 return true;
             }
         }
         return false;
+    }
+
+    fn draw_walls(&mut self, ctx: &mut Context) {
+        for i in 0..self.walls.len() {
+            self.walls[i].draw(ctx);
+        }
     }
 }
 
@@ -86,9 +92,7 @@ impl State for GameState {
 
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         clear_window(ctx);
-        for i in 0..self.walls.len() {
-            self.walls[i].draw(ctx);
-        }
+        self.draw_walls(ctx);
         self.player.draw(ctx);
         Ok(())
     }

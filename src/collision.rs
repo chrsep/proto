@@ -5,7 +5,7 @@ pub trait Collidable {
     fn check_collision(self, collision_box: Rectangle) -> bool;
 }
 
-pub fn going_to_collide_top<F, S>(first: F, second: S) -> bool
+pub fn check_top_collision<F, S>(first: F, second: S) -> bool
 where
     F: Collidable,
     S: Collidable,
@@ -22,7 +22,7 @@ where
     first.check_collision(second_collision_box)
 }
 
-pub fn going_to_collide_bottom<F, S>(first: F, second: S) -> bool
+pub fn check_bottom_collision<F, S>(first: F, second: S) -> bool
 where
     F: Collidable,
     S: Collidable,
@@ -39,7 +39,7 @@ where
     first.check_collision(second_collision_box)
 }
 
-pub fn going_to_collide_left<F, S>(first: F, second: S) -> bool
+pub fn check_left_collision<F, S>(first: F, second: S) -> bool
 where
     F: Collidable,
     S: Collidable,
@@ -53,7 +53,7 @@ where
     first.check_collision(second_collision_box)
 }
 
-pub fn going_to_collide_right<F, S>(first: F, second: S) -> bool
+pub fn check_right_collision<F, S>(first: F, second: S) -> bool
 where
     F: Collidable,
     S: Collidable,

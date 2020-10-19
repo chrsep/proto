@@ -1,6 +1,6 @@
 use crate::collision::Collidable;
 use tetra::graphics::{Rectangle, Texture};
-use tetra::math::{Aabr, Vec2};
+use tetra::math::Vec2;
 use tetra::{graphics, Context};
 
 // ===============================================================
@@ -59,21 +59,7 @@ impl Collidable for &Player {
         return self.collision_box;
     }
     fn check_collision(self, collision_box: Rectangle) -> bool {
-        let self_aabb = Aabr {
-            max: Vec2::new(
-                self.collision_box.x + self.collision_box.width,
-                self.collision_box.y + self.collision_box.height,
-            ),
-            min: Vec2::new(self.collision_box.x, self.collision_box.y),
-        };
-        let other_aabb = Aabr {
-            max: Vec2::new(
-                collision_box.x + collision_box.width,
-                collision_box.y + collision_box.height,
-            ),
-            min: Vec2::new(collision_box.x, collision_box.y),
-        };
-        self_aabb.collides_with_aabr(other_aabb)
+        return self.collision_box.intersects(&collision_box);
     }
 }
 
@@ -127,20 +113,6 @@ impl Collidable for &Wall {
         return self.collision_box;
     }
     fn check_collision(self, collision_box: Rectangle) -> bool {
-        let self_aabb = Aabr {
-            max: Vec2::new(
-                self.collision_box.x + self.collision_box.width,
-                self.collision_box.y + self.collision_box.height,
-            ),
-            min: Vec2::new(self.collision_box.x, self.collision_box.y),
-        };
-        let other_aabb = Aabr {
-            max: Vec2::new(
-                collision_box.x + collision_box.width,
-                collision_box.y + collision_box.height,
-            ),
-            min: Vec2::new(collision_box.x, collision_box.y),
-        };
-        self_aabb.collides_with_aabr(other_aabb)
+        return self.collision_box.intersects(&collision_box);
     }
 }

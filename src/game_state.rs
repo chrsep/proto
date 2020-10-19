@@ -8,7 +8,7 @@ use tetra::{graphics, Context, State};
 
 pub struct GameState {
     player: Player,
-    walls: [Wall; 1],
+    walls: [Wall; 5],
 }
 
 impl GameState {
@@ -18,7 +18,13 @@ impl GameState {
     pub fn new(ctx: &mut Context) -> tetra::Result<GameState> {
         Ok(GameState {
             player: Player::new(ctx, GameState::MAP_WIDTH / 2.0, GameState::MAP_HEIGHT / 2.0),
-            walls: [Wall::new(ctx, 300.0, 300.0, 4, 4)],
+            walls: [
+                Wall::new(ctx, 300.0, 300.0, 1, 16),
+                Wall::new(ctx, 300.0, 300.0, 10, 1),
+                Wall::new(ctx, 450.0, 300.0, 1, 16),
+                Wall::new(ctx, 300.0, 520.0, 4, 1),
+                Wall::new(ctx, 400.0, 520.0, 4, 1),
+            ],
         })
     }
 
